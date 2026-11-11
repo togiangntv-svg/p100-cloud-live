@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "Localizable.strings": {
+      "NSCameraUsageDescription": "Permite que 100 use la cámara solo cuando elijas tomar una foto para la solicitud actual.",
+      "NSPhotoLibraryUsageDescription": "Permite que 100 acceda a una foto solo cuando elijas una para la solicitud actual."
+    }
+  }
+}

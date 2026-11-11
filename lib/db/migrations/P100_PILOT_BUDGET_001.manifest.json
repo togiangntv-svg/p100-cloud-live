@@ -1,0 +1,19 @@
+{
+  "migrationId": "P100_PILOT_BUDGET_001",
+  "checksumEncoding": "utf8-lf",
+  "upSha256": "aea079c308b56434929494b3a0ed479e82a93d130aa1b2e9c7f1ad1792e2cebf",
+  "files": {
+    "up": "P100_PILOT_BUDGET_001.up.sql",
+    "verify": "P100_PILOT_BUDGET_001.verify.sql",
+    "contain": "P100_PILOT_BUDGET_001.contain.sql"
+  },
+  "checksums": {
+    "up": "aea079c308b56434929494b3a0ed479e82a93d130aa1b2e9c7f1ad1792e2cebf",
+    "verify": "1d68e0900eec122a04999c2e85f3566cdbe0ba64b79e3207d5852cf78fd69381",
+    "contain": "e6f4ab55618cd4268325098f79dcbcd2ee6e9c9c8b73e1f1f1d545831dfae052"
+  },
+  "ledgerSchema": "ai_pilot_v1",
+  "advisoryLock": "197002",
+  "composedMigrations": [],
+  "order": "Blank schema only; Identity base then exact A1 SQL then record A1+base and verify. Existing unrecorded schema fails closed."
+}

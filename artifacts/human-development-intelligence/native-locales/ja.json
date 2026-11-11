@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "Localizable.strings": {
+      "NSCameraUsageDescription": "この依頼のために写真を撮ることを選んだ場合にのみ、100 にカメラの使用を許可します。",
+      "NSPhotoLibraryUsageDescription": "この依頼のために写真を選んだ場合にのみ、100 にその写真へのアクセスを許可します。"
+    }
+  }
+}

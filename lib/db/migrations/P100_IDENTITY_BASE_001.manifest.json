@@ -1,0 +1,24 @@
+{
+  "migrationId": "P100_IDENTITY_BASE_001",
+  "checksumEncoding": "utf8-lf",
+  "upSha256": "92721a1eb6eaa3227195dc25b70d7ce157cdf68e606328ea07b2cd114be05059",
+  "files": {
+    "up": "P100_IDENTITY_BASE_001.up.sql",
+    "verify": "P100_IDENTITY_BASE_001.verify.sql",
+    "contain": "P100_IDENTITY_BASE_001.contain.sql"
+  },
+  "checksums": {
+    "up": "92721a1eb6eaa3227195dc25b70d7ce157cdf68e606328ea07b2cd114be05059",
+    "verify": "d7244d8a5e49fec15b6c837de853b4629bf9c48a874fb61bfd637490a92b692a",
+    "contain": "b30d5e6f4a308d2431a4e0e6d32ca2f91ef885f818ab0cd04b01666fc21bf4f4"
+  },
+  "ledgerSchema": "identity_v1",
+  "advisoryLock": "197001",
+  "composedMigrations": [
+    {
+      "migrationId": "P100_A1_GOOGLE_001",
+      "checksum": "7268a1d3a54477318f289deae81d08ed6247a0750b949dd74c65759776c32773"
+    }
+  ],
+  "order": "Blank schema only; Identity base then exact A1 SQL then record A1+base and verify. Existing unrecorded schema fails closed."
+}

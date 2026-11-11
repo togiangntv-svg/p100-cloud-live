@@ -1,0 +1,213 @@
+{
+  "timestamp": "2026-09-14T02:42:57.353Z",
+  "status": "PASS_CANDIDATE",
+  "results": [
+    {
+      "id": "R1",
+      "title": "Không connector vẫn tạo relevant context local",
+      "blocking": true,
+      "pass": true,
+      "detail": "Goal, self-report và local episode vẫn tạo Decision Bundle."
+    },
+    {
+      "id": "R2",
+      "title": "SEND / SILENCE tuân theo relevance",
+      "blocking": true,
+      "pass": true,
+      "detail": "Thiếu relevance phải trả Silence, không gửi recommendation."
+    },
+    {
+      "id": "R3",
+      "title": "Fact và inference được tách nhãn",
+      "blocking": true,
+      "pass": true,
+      "detail": "Understanding phải là inference có thể contest."
+    },
+    {
+      "id": "R4",
+      "title": "Correction đổi recommendation tương lai",
+      "blocking": true,
+      "pass": true,
+      "detail": "Correction phải đổi understanding và recommendation được build sau đó."
+    },
+    {
+      "id": "R5",
+      "title": "Calendar revocation đổi future Decision Bundle",
+      "blocking": true,
+      "pass": true,
+      "detail": "Calendar phải biến mất và claim phụ thuộc phải được flag review."
+    },
+    {
+      "id": "R6",
+      "title": "Whole-Human conflict giữ user authorship",
+      "blocking": true,
+      "pass": true,
+      "detail": "Lựa chọn recovery của người dùng không bị recommendation ghi đè."
+    },
+    {
+      "id": "R7",
+      "title": "Overload có Reduce Load và Recover",
+      "blocking": true,
+      "pass": true,
+      "detail": "Reduce Load tạo Silence; Recover phục hồi recommendation."
+    },
+    {
+      "id": "R8",
+      "title": "Một positive episode không tạo durable truth",
+      "blocking": true,
+      "pass": true,
+      "detail": "Một episode chỉ là tín hiệu, claim vẫn none và version vẫn 0."
+    },
+    {
+      "id": "R9",
+      "title": "Repeated support mới tạo versioned learning",
+      "blocking": true,
+      "pass": true,
+      "detail": "Đủ ba episode mới tạo active claim có version."
+    },
+    {
+      "id": "R10",
+      "title": "Learning claim contestable và retractable",
+      "blocking": true,
+      "pass": true,
+      "detail": "Active claim phải chuyển được sang contested và retracted."
+    },
+    {
+      "id": "A1",
+      "title": "Recommendation, decision và action là object tách biệt",
+      "blocking": true,
+      "pass": true,
+      "detail": "Ba object có kind và identity riêng."
+    },
+    {
+      "id": "A2",
+      "title": "Anti-dependency unaided checkpoint là bắt buộc",
+      "blocking": true,
+      "pass": true,
+      "detail": "Decision giữ cờ unaided checkpoint và user authorship."
+    },
+    {
+      "id": "A3",
+      "title": "High-stakes route M8/A6",
+      "blocking": true,
+      "pass": true,
+      "detail": "Medical/legal luôn chuyển M8/A6."
+    },
+    {
+      "id": "A4",
+      "title": "Không chẩn đoán hoặc quyết định thay chuyên gia",
+      "blocking": true,
+      "pass": true,
+      "detail": "High-stakes route không chẩn đoán và không quyết định thay."
+    },
+    {
+      "id": "A5",
+      "title": "Autonomy chỉ có A0–A3, không A4/A5",
+      "blocking": true,
+      "pass": true,
+      "detail": "Core autonomy levels không chứa A4/A5."
+    },
+    {
+      "id": "A6",
+      "title": "Tất cả dữ liệu là DEMO/LOCAL",
+      "blocking": true,
+      "pass": true,
+      "detail": "Decision Bundle và recommendation đều có provenance DEMO_LOCAL."
+    },
+    {
+      "id": "A7",
+      "title": "State quan trọng tồn tại đúng lifecycle",
+      "blocking": true,
+      "pass": true,
+      "detail": "Correction, revocation, decision và claim status sống qua hydrate; validation log là session-only."
+    }
+  ],
+  "faultDetection": [
+    {
+      "testId": "R1",
+      "fault": "DROP_LOCAL_CONTEXT",
+      "detected": true
+    },
+    {
+      "testId": "R2",
+      "fault": "FORCE_SEND_WITHOUT_RELEVANCE",
+      "detected": true
+    },
+    {
+      "testId": "R3",
+      "fault": "MISLABEL_INFERENCE_AS_FACT",
+      "detected": true
+    },
+    {
+      "testId": "R4",
+      "fault": "IGNORE_CORRECTION",
+      "detected": true
+    },
+    {
+      "testId": "R5",
+      "fault": "IGNORE_REVOCATION",
+      "detected": true
+    },
+    {
+      "testId": "R6",
+      "fault": "OVERRIDE_USER_DECISION",
+      "detected": true
+    },
+    {
+      "testId": "R7",
+      "fault": "IGNORE_REDUCE_LOAD",
+      "detected": true
+    },
+    {
+      "testId": "R8",
+      "fault": "PROMOTE_SINGLE_EPISODE",
+      "detected": true
+    },
+    {
+      "testId": "R9",
+      "fault": "SKIP_VERSIONED_LEARNING",
+      "detected": true
+    },
+    {
+      "testId": "R10",
+      "fault": "LOCK_LEARNING_CLAIM",
+      "detected": true
+    },
+    {
+      "testId": "A1",
+      "fault": "COLLAPSE_RECOMMENDATION_DECISION_ACTION",
+      "detected": true
+    },
+    {
+      "testId": "A2",
+      "fault": "SKIP_UNAIDED_CHECKPOINT",
+      "detected": true
+    },
+    {
+      "testId": "A3",
+      "fault": "SKIP_HIGH_STAKES_ROUTE",
+      "detected": true
+    },
+    {
+      "testId": "A4",
+      "fault": "ALLOW_DIAGNOSIS",
+      "detected": true
+    },
+    {
+      "testId": "A5",
+      "fault": "ENABLE_A4_A5",
+      "detected": true
+    },
+    {
+      "testId": "A6",
+      "fault": "MARK_REAL_DATA",
+      "detected": true
+    },
+    {
+      "testId": "A7",
+      "fault": "DROP_PERSISTED_REVOCATION",
+      "detected": true
+    }
+  ],
+  "passCandidate": true
+}

@@ -1,0 +1,8 @@
+{
+  "ios": {
+    "Localizable.strings": {
+      "NSCameraUsageDescription": "仅当你选择为当前请求拍照时，允许 100 使用相机。",
+      "NSPhotoLibraryUsageDescription": "仅当你为当前请求选择一张照片时，允许 100 访问该照片。"
+    }
+  }
+}

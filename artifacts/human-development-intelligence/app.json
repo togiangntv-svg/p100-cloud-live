@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "100",
+    "slug": "togiang",
+    "owner": "togiangntvs-team",
+    "extra": {
+      "eas": {
+        "projectId": "fb05559a-bc57-42e4-b792-6f7c94d9012e"
+      }
+    },
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "human-development-intelligence",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "supportsTablet": false,
+      "usesAppleSignIn": true,
+      "bundleIdentifier": "com.togiang.hdi100",
+      "buildNumber": "2",
+      "entitlements": {},
+      "infoPlist": {}
+    },
+    "android": {
+      "package": "com.togiang.hdi100",
+      "versionCode": 2
+    },
+    "web": {
+      "favicon": "./assets/images/icon.png"
+    },
+    "locales": {
+      "vi": "./native-locales/vi.json",
+      "en": "./native-locales/en.json",
+      "zh-Hans": "./native-locales/zh-Hans.json",
+      "es": "./native-locales/es.json",
+      "hi": "./native-locales/hi.json",
+      "ja": "./native-locales/ja.json",
+      "ko": "./native-locales/ko.json",
+      "ru": "./native-locales/ru.json"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-apple-authentication",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow 100 to access a photo only when you choose one for the current request.",
+          "cameraPermission": "Allow 100 to use the camera only when you choose to take a photo for the current request.",
+          "microphonePermission": false
+        }
+      ],
+      "./plugins/withIosNumericTargetStrings",
+      "./plugins/withAndroidMinSdkVersion"
+    ],
+    "experiments": {
+      "typedRoutes": true,
+      "reactCompiler": true
+    }
+  }
+}

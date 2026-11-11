@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "types": [],
+    "lib": ["ES2022", "DOM"],
+    "paths": {
+      "@workspace/api-client-react": ["../../../lib/api-client-react/src/generated/api.schemas.ts"]
+    }
+  },
+  "files": [
+    "../domain/m4/contract.ts",
+    "../domain/m4/resolver.ts",
+    "../domain/session-task/store.ts",
+    "./m4-typecheck.ts"
+  ]
+}

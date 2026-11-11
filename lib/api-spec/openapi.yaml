@@ -1,0 +1,806 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: ai
+    description: Disabled-by-default internal AI trial gateway
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /ai/status:
+    get:
+      operationId: aiGatewayStatus
+      tags: [ai]
+      summary: Check internal AI gateway availability
+      responses:
+        "200":
+          description: Current gateway state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiGatewayStatus"
+  /ai/session:
+    post:
+      operationId: aiPilotSession
+      tags: [ai]
+      summary: Start a short-lived signed pilot session after explicit consent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiSessionRequest"
+      responses:
+        "200":
+          description: Signed HttpOnly pilot session established
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiSessionResult"
+        "403":
+          description: Consent missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "429":
+          description: Pilot budget exhausted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "503":
+          description: Provider, session signing, or budget state unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+  /ai/respond:
+    post:
+      operationId: aiRespond
+      tags: [ai]
+      summary: Send one consented internal-trial AI request
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiRespondRequest"
+      responses:
+        "200":
+          description: Model response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiRespondResult"
+        "401":
+          description: Internal authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "403":
+          description: Consent or context permission missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "409":
+          description: Stale, duplicate, or conflicting request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "413":
+          description: Input too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "429":
+          description: Rate or budget limit reached
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "502":
+          description: Provider or output safety failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "503":
+          description: AI is not connected or not enabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+  /ai/intent:
+    post:
+      operationId: aiResolveIntent
+      tags: [ai]
+      deprecated: true
+      summary: Deprecated legacy intent compatibility endpoint; use POST /api/ai/m3
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AiIntentRequest"
+      responses:
+        "200":
+          description: Structured task-bound intent understanding
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiIntentResult"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "401":
+          description: Intent session authentication required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "403":
+          description: Intent consent or context permission missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "409":
+          description: Stale, duplicate, or conflicting task revision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "413":
+          description: Intent input too large
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "429":
+          description: Rate or pilot budget reached
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "502":
+          description: Provider or structured output failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "503":
+          description: AI is not connected or not enabled
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+  /ai/m3/permission:
+    post:
+      operationId: aiM3Permission
+      tags: [ai]
+      summary: Grant or revoke one Identity-bound M3 purpose permission
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/M3PermissionRequest"
+      responses:
+        "200":
+          description: Current idempotent grant or revoke receipt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/M3PermissionReceipt"
+        "400":
+          description: Invalid or expired permission command
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "401":
+          description: Current Identity session required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "403":
+          description: Permission scope does not match the current Identity-bound grant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "409":
+          description: Stale scope, replay, or idempotency conflict
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "503":
+          description: RAM authority unavailable or safely exhausted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+  /ai/m3:
+    post:
+      operationId: aiM3
+      tags: [ai]
+      summary: Interpret one Identity-authorized scoped M3 SessionTask operation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/M3Request"
+      responses:
+        "200":
+          description: Structured interpretation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/M3Response"
+        "400":
+          description: Invalid M3 request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "401":
+          description: Current Identity session required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "403":
+          description: M3 permission missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "409":
+          description: Stale, duplicate, revoked, or conflicting operation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "429":
+          description: Pilot budget or rate limit reached
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "502":
+          description: Provider or structured output failure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "503":
+          description: M3 is disabled or unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+        "504":
+          description: M3 provider timeout
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiProblem"
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    AiGatewayStatus:
+      type: object
+      additionalProperties: false
+      properties:
+        availability:
+          type: string
+          enum: [not_connected, locked, ready]
+        provider:
+          type: string
+          enum: [openai_replit_managed]
+        liveModelVerified:
+          type: boolean
+        requiresInternalAuth:
+          type: boolean
+        model:
+          type: string
+          enum: [gpt-5.6-sol]
+        maxLiveCalls:
+          type: number
+          multipleOf: 1
+          minimum: 0
+        usedLiveCalls:
+          type: number
+          multipleOf: 1
+          minimum: 0
+        remainingLiveCalls:
+          type: number
+          multipleOf: 1
+          minimum: 0
+        inputTokens:
+          type: number
+          multipleOf: 1
+          minimum: 0
+        outputTokens:
+          type: number
+          multipleOf: 1
+          minimum: 0
+      required: [availability, provider, liveModelVerified, requiresInternalAuth, model, maxLiveCalls, usedLiveCalls, remainingLiveCalls, inputTokens, outputTokens]
+    AiMessage:
+      type: object
+      additionalProperties: false
+      properties:
+        role:
+          type: string
+          enum: [user, assistant]
+        content:
+          type: string
+          minLength: 1
+          maxLength: 4000
+      required: [role, content]
+    AiRelevantContext:
+      type: object
+      additionalProperties: false
+      properties:
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        source:
+          type: string
+          enum: [user_statement, user_correction, ai_inference]
+        permission:
+          type: string
+          enum: [external_ai_allowed]
+        createdAt:
+          type: string
+          format: date-time
+      required: [text, source, permission, createdAt]
+    AiConsent:
+      type: object
+      additionalProperties: false
+      properties:
+        granted:
+          type: boolean
+        version:
+          type: string
+          enum: ["2026-09-10", "m3.v1"]
+        purpose:
+          type: string
+          enum: [internal_coaching_response, internal_intent_understanding, m3_intent_understanding]
+      required: [granted, version, purpose]
+    AiSessionRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        locale:
+          type: string
+          enum: [vi, en, zh-Hans, es, hi, ja, ko, ru]
+        consent:
+          $ref: "#/components/schemas/AiConsent"
+      required: [locale, consent]
+    AiSessionResult:
+      type: object
+      additionalProperties: false
+      properties:
+        enabled:
+          type: boolean
+        expiresAt:
+          type: string
+          format: date-time
+      required: [enabled, expiresAt]
+    AiRespondRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        requestId:
+          type: string
+          minLength: 8
+          maxLength: 100
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        locale:
+          type: string
+          enum: [vi, en]
+        consent:
+          $ref: "#/components/schemas/AiConsent"
+        messages:
+          type: array
+          minItems: 1
+          maxItems: 20
+          items:
+            $ref: "#/components/schemas/AiMessage"
+        relevantContext:
+          type: array
+          maxItems: 20
+          items:
+            $ref: "#/components/schemas/AiRelevantContext"
+      required: [requestId, createdAt, expiresAt, locale, consent, messages, relevantContext]
+    AiSuggestion:
+      type: object
+      additionalProperties: false
+      properties:
+        kind:
+          type: string
+          enum: [plan.create, plan.view, plan.edit, action.self, outcome.record, understanding.correct]
+        label:
+          type: string
+          minLength: 1
+          maxLength: 120
+      required: [kind, label]
+    AiUsage:
+      type: object
+      additionalProperties: false
+      properties:
+        inputTokens:
+          type: number
+          minimum: 0
+          multipleOf: 1
+        outputTokens:
+          type: number
+          minimum: 0
+          multipleOf: 1
+      required: [inputTokens, outputTokens]
+    AiRespondResult:
+      type: object
+      additionalProperties: false
+      properties:
+        requestId:
+          type: string
+        text:
+          type: string
+        suggestions:
+          type: array
+          maxItems: 3
+          items:
+            $ref: "#/components/schemas/AiSuggestion"
+        usage:
+          $ref: "#/components/schemas/AiUsage"
+      required: [requestId, text, suggestions, usage]
+    AiIntentRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        requestId:
+          type: string
+          minLength: 8
+          maxLength: 100
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+        locale:
+          type: string
+          enum: [vi, en]
+        consent:
+          $ref: "#/components/schemas/AiConsent"
+        sessionId:
+          type: string
+          minLength: 8
+          maxLength: 100
+        sessionRevision:
+          type: string
+          minLength: 1
+          maxLength: 100
+        taskId:
+          type: string
+          minLength: 1
+          maxLength: 100
+        taskRevision:
+          type: string
+          minLength: 1
+          maxLength: 100
+        inputRevision:
+          type: string
+          minLength: 1
+          maxLength: 100
+        text:
+          type: string
+          minLength: 1
+          maxLength: 2000
+        relevantContext:
+          type: array
+          maxItems: 10
+          items:
+            $ref: "#/components/schemas/AiRelevantContext"
+      required: [requestId, createdAt, expiresAt, locale, consent, sessionId, sessionRevision, taskId, taskRevision, inputRevision, text, relevantContext]
+    AiIntentUnderstanding:
+      type: object
+      additionalProperties: false
+      properties:
+        status:
+          type: string
+          enum: [understood, needs_clarification, open_path, supportive_hold]
+        intent:
+          type: string
+          enum: [continue_current_task, adjust_current_task, pause_current_task, end_current_task, change_task_context, review_progress, record_outcome, correct_understanding, unknown]
+        confidence:
+          type: string
+          enum: [high, medium, low]
+        summary:
+          type: string
+          minLength: 1
+          maxLength: 500
+        clarificationQuestion:
+          type: [string, "null"]
+          maxLength: 300
+        suggestedActions:
+          type: array
+          maxItems: 3
+          items:
+            type: string
+            enum: [continue_current_task, adjust_current_task, pause_current_task, end_current_task, change_task_context, review_progress, record_outcome, correct_understanding]
+      required: [status, intent, confidence, summary, clarificationQuestion, suggestedActions]
+    AiIntentResult:
+      type: object
+      additionalProperties: false
+      properties:
+        requestId:
+          type: string
+        sessionId:
+          type: string
+        sessionRevision:
+          type: string
+        taskId:
+          type: string
+        taskRevision:
+          type: string
+        inputRevision:
+          type: string
+        understanding:
+          $ref: "#/components/schemas/AiIntentUnderstanding"
+        usage:
+          $ref: "#/components/schemas/AiUsage"
+      required: [requestId, sessionId, sessionRevision, taskId, taskRevision, inputRevision, understanding, usage]
+    M3Consent:
+      type: object
+      additionalProperties: false
+      properties:
+        granted: { type: boolean }
+        version: { const: "m3.v1" }
+        purpose: { const: m3_intent_understanding }
+      required: [granted, version, purpose]
+    M3Context:
+      type: object
+      additionalProperties: false
+      properties:
+        id: { type: string, minLength: 1, maxLength: 80 }
+        kind: { type: string, enum: [workout, other] }
+        text: { type: string, minLength: 1, maxLength: 1000 }
+        permission: { const: external_ai_allowed }
+      required: [id, kind, text, permission]
+    M3Turn:
+      type: object
+      additionalProperties: false
+      properties:
+        role: { type: string, enum: [user, assistant] }
+        text: { type: string, minLength: 1, maxLength: 1000 }
+      required: [role, text]
+    M3Correction:
+      type: object
+      additionalProperties: false
+      properties:
+        text: { type: string, minLength: 1, maxLength: 1000 }
+        replaces_revision: { type: number, multipleOf: 1, minimum: 1, maximum: 1000000000 }
+      required: [text, replaces_revision]
+    M3Input:
+      type: object
+      additionalProperties: false
+      properties:
+        locale: { type: string, enum: [vi, en, zh-Hans, es, hi, ja, ko, ru] }
+        current_text: { type: string, minLength: 1, maxLength: 1000 }
+        relevant_context:
+          type: array
+          maxItems: 4
+          items: { $ref: "#/components/schemas/M3Context" }
+        recent_relevant_turns:
+          type: array
+          maxItems: 6
+          items: { $ref: "#/components/schemas/M3Turn" }
+        user_correction:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/M3Correction"
+        safety_signal: { type: string, enum: [CLEAR, SENSITIVE, PAIN, URGENT] }
+        asking_stopped: { type: boolean }
+      required: [locale, current_text, relevant_context, recent_relevant_turns, user_correction, safety_signal, asking_stopped]
+    M3Request:
+      type: object
+      additionalProperties: false
+      properties:
+        version: { const: "m3.v1" }
+        operation: { type: string, enum: [interpret, revoke] }
+        requestId: { type: string, minLength: 8, maxLength: 100 }
+        sessionId: { type: string, minLength: 1, maxLength: 100 }
+        taskId: { type: string, minLength: 1, maxLength: 180 }
+        taskRevision: { type: number, multipleOf: 1, minimum: 1, maximum: 1000000000 }
+        permissionRevision: { type: number, multipleOf: 1, minimum: 1, maximum: 1000000000 }
+        grantId: { type: string, minLength: 8, maxLength: 100 }
+        createdAt: { type: string, format: date-time }
+        expiresAt: { type: string, format: date-time }
+        locale: { type: string, enum: [vi, en, zh-Hans, es, hi, ja, ko, ru] }
+        consent: { $ref: "#/components/schemas/M3Consent" }
+        input:
+          oneOf:
+            - type: "null"
+            - $ref: "#/components/schemas/M3Input"
+      required: [version, operation, requestId, sessionId, taskId, taskRevision, permissionRevision, grantId, createdAt, expiresAt, locale, consent, input]
+    M3PermissionGrantRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        version: { const: "m3.v1" }
+        action: { const: GRANT }
+        purpose: { const: m3_intent_understanding }
+        operationId: { type: string, minLength: 8, maxLength: 100 }
+        taskSessionId: { type: string, minLength: 1, maxLength: 100 }
+        taskId: { type: string, minLength: 1, maxLength: 180 }
+        taskRevision: { type: number, multipleOf: 1, minimum: 1, maximum: 1000000000 }
+        permissionRevision: { type: number, multipleOf: 1, minimum: 1, maximum: 1000000000 }
+        accepted: { const: true }
+        createdAt: { type: string, format: date-time }
+      required: [version, action, purpose, operationId, taskSessionId, taskId, taskRevision, permissionRevision, accepted, createdAt]
+    M3PermissionRevokeRequest:
+      type: object
+      additionalProperties: false
+      properties:
+        version: { const: "m3.v1" }
+        action: { const: REVOKE }
+        purpose: { const: m3_intent_understanding }
+        operationId: { type: string, minLength: 8, maxLength: 100 }
+        grantOperationId: { type: string, minLength: 8, maxLength: 100 }
+        grantId: { type: string, minLength: 8, maxLength: 100 }
+        taskSessionId: { type: string, minLength: 1, maxLength: 100 }
+        taskId: { type: string, minLength: 1, maxLength: 180 }
+        taskRevision: { type: number, multipleOf: 1, minimum: 1, maximum: 1000000000 }
+        permissionRevision: { type: number, multipleOf: 1, minimum: 1, maximum: 1000000000 }
+        createdAt: { type: string, format: date-time }
+      required: [version, action, purpose, operationId, grantOperationId, taskSessionId, taskId, taskRevision, permissionRevision, createdAt]
+    M3PermissionRequest:
+      oneOf:
+        - $ref: "#/components/schemas/M3PermissionGrantRequest"
+        - $ref: "#/components/schemas/M3PermissionRevokeRequest"
+    M3PermissionGrantReceipt:
+      type: object
+      additionalProperties: false
+      properties:
+        version: { const: "m3.v1" }
+        action: { const: GRANT }
+        purpose: { const: m3_intent_understanding }
+        operationId: { type: string }
+        grantId: { type: string }
+        taskSessionId: { type: string }
+        taskId: { type: string }
+        taskRevision: { type: number, multipleOf: 1 }
+        permissionRevision: { type: number, multipleOf: 1 }
+        expiresAt: { type: string, format: date-time }
+      required: [version, action, purpose, operationId, grantId, taskSessionId, taskId, taskRevision, permissionRevision, expiresAt]
+    M3PermissionRevokeReceipt:
+      type: object
+      additionalProperties: false
+      properties:
+        version: { const: "m3.v1" }
+        action: { const: REVOKE }
+        purpose: { const: m3_intent_understanding }
+        operationId: { type: string }
+        grantOperationId: { type: string }
+        grantId: { type: string }
+        taskSessionId: { type: string }
+        taskId: { type: string }
+        taskRevision: { type: number, multipleOf: 1 }
+        permissionRevision: { type: number, multipleOf: 1 }
+        revoked: { const: true }
+      required: [version, action, purpose, operationId, grantOperationId, taskSessionId, taskId, taskRevision, permissionRevision, revoked]
+    M3PermissionReceipt:
+      oneOf:
+        - $ref: "#/components/schemas/M3PermissionGrantReceipt"
+        - $ref: "#/components/schemas/M3PermissionRevokeReceipt"
+    M3Usage:
+      type: object
+      additionalProperties: false
+      properties:
+        inputTokens: { type: number, multipleOf: 1, minimum: 0 }
+        outputTokens: { type: number, multipleOf: 1, minimum: 0 }
+      required: [inputTokens, outputTokens]
+    M3Response:
+      type: object
+      additionalProperties: false
+      properties:
+        version: { const: "m3.v1" }
+        requestId: { type: string }
+        sessionId: { type: string }
+        taskId: { type: string }
+        taskRevision: { type: number, multipleOf: 1 }
+        permissionRevision: { type: number, multipleOf: 1 }
+        intentType: { type: string, enum: [GOAL, CURRENT_TASK, QUESTION, CORRECTION, CHANGE_OF_MIND, REFUSAL, STOP_PAUSE, AMBIGUOUS, HUMOR_PRAGMATIC, SAFETY, OUT_OF_SCOPE] }
+        interpretedMeaning: { type: string }
+        confidence: { type: number, minimum: 0, maximum: 1 }
+        uncertainty: { type: [string, "null"] }
+        missingContext: { type: array, maxItems: 1, items: { type: string } }
+        clarificationNeeded: { type: boolean }
+        clarificationQuestion: { type: [string, "null"] }
+        safetyState: { type: string, enum: [CLEAR, SENSITIVE, PAIN, URGENT] }
+        suggestedNextRole: { type: string, enum: [M4, M5, M6, M7, STOP] }
+        taskKind: { type: [string, "null"] }
+        contextEffect: { type: string, enum: [NONE, ADJUST_CURRENT] }
+        usedContextIds: { type: array, items: { type: string } }
+        response: { type: string }
+        usage: { $ref: "#/components/schemas/M3Usage" }
+      required: [version, requestId, sessionId, taskId, taskRevision, permissionRevision, intentType, interpretedMeaning, confidence, uncertainty, missingContext, clarificationNeeded, clarificationQuestion, safetyState, suggestedNextRole, taskKind, contextEffect, usedContextIds, response, usage]
+    M3RevocationReceipt:
+      type: object
+      additionalProperties: false
+      properties:
+        version: { const: "m3.v1" }
+        requestId: { type: string }
+        sessionId: { type: string }
+        taskId: { type: string }
+        taskRevision: { type: number, multipleOf: 1 }
+        permissionRevision: { type: number, multipleOf: 1 }
+        revoked: { const: true }
+      required: [version, requestId, sessionId, taskId, taskRevision, permissionRevision, revoked]
+    AiProblem:
+      type: object
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        retryable:
+          type: boolean
+      required: [code, message, retryable]

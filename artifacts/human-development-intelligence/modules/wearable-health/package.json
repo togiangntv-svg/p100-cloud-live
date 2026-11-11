@@ -1,0 +1,12 @@
+{
+  "name": "@100/wearable-health",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Project 100 local read-only wearable native module.",
+  "main": "index.ts",
+  "types": "index.ts",
+  "license": "UNLICENSED",
+  "peerDependencies": {
+    "expo": "*"
+  }
+}

@@ -1,0 +1,41 @@
+# Manual blueprint only: no deploy/migration is authorized by this file.
+services:
+  - type: web
+    name: p100-api-server
+    runtime: node
+    plan: free
+    autoDeployTrigger: off
+    healthCheckPath: /api/healthz
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @workspace/api-server run build
+    startCommand: node --enable-source-maps artifacts/api-server/dist/index.mjs
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: NODE_ENV
+        value: "production"
+      - key: API_LISTEN_HOST
+        value: "0.0.0.0"
+      - key: AI_GATEWAY_ENABLED
+        value: "true"
+      - key: AI_M3_ENABLED
+        value: "true"
+      - key: AI_PILOT_STORE_BACKEND
+        value: "postgres"
+      - key: AI_PILOT_MAX_CALLS
+        value: "21"
+      - key: IDENTITY_SESSION_TTL_MS
+        value: "2592000000"
+      - key: APPLE_SIGN_IN_AUDIENCE
+        value: "com.togiang.hdi100"
+      - key: APPLE_SIGN_IN_CHALLENGE_TTL_MS
+        value: "300000"
+      - key: APPLE_JWK_TIMEOUT_MS
+        value: "10000"
+      - key: APPLE_CHALLENGE_ISSUANCE_WINDOW_MS
+        value: "60000"
+      - key: APPLE_CHALLENGE_ISSUANCE_MAX_PER_WINDOW
+        value: "20"

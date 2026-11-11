@@ -1,0 +1,33 @@
+{
+  "build": {
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_M3_RUNTIME_MODE": "off"
+      }
+    },
+    "testflight-live": {
+      "distribution": "store",
+      "environment": "preview",
+      "env": {
+        "EXPO_PUBLIC_M3_RUNTIME_MODE": "live",
+        "EXPO_PUBLIC_IDENTITY_REQUEST_TIMEOUT_MS": "60000"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "ios": {
+        "ascAppId": "6816377557"
+      }
+    },
+    "testflight-live": {
+      "ios": {
+        "ascAppId": "6816377557"
+      }
+    }
+  }
+}

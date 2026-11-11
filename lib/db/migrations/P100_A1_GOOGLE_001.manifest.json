@@ -1,0 +1,10 @@
+{
+  "migrationId": "P100_A1_GOOGLE_001",
+  "checksumEncoding": "utf8-lf",
+  "upSha256": "7268a1d3a54477318f289deae81d08ed6247a0750b949dd74c65759776c32773",
+  "files": {
+    "up": "P100_A1_GOOGLE_001.up.sql",
+    "verify": "P100_A1_GOOGLE_001.verify.sql",
+    "contain": "P100_A1_GOOGLE_001.contain.sql"
+  }
+}
