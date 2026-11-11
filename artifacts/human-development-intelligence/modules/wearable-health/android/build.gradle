@@ -1,0 +1,22 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'com.project100.wearablehealth'
+version = '1.0.0'
+
+android {
+  namespace "com.project100.wearablehealth"
+
+  defaultConfig {
+    versionCode 1
+    versionName "1.0.0"
+  }
+}
+
+dependencies {
+  // Official stable Jetpack Health Connect client only.
+  implementation "androidx.health.connect:connect-client:1.1.0"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2"
+}

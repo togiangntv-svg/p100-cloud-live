@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <uses-permission android:name="android.permission.health.READ_STEPS" />
+  <uses-permission android:name="android.permission.health.READ_EXERCISE" />
+
+  <!-- Android 13 and lower use the separately installed Health Connect provider. -->
+  <queries>
+    <package android:name="com.google.android.apps.healthdata" />
+  </queries>
+</manifest>
